@@ -5,7 +5,28 @@ public class PlayerAnimations : MonoBehaviour
     [SerializeField] private PlayerMovement Player;
     [SerializeField] private Animator Animator;
 
-    private static bool _isChanged = false;
+    private bool _isChanged = false;
+    private bool _isDead = false;
+
+    private void Awake()
+    {
+        PlayerCollision.OnObstacleCollision += OnCollision;
+    }
+
+    private void OnDestroy()
+    {
+        PlayerCollision.OnObstacleCollision -= OnCollision;
+    }
+
+    private void OnCollision()
+    {
+       _isDead = true;
+
+       if (_isDead)
+       {
+            Animator.CrossFade("White_Dead", 0, 0);
+       }
+    }
 
     private void Start()
     {
@@ -48,11 +69,11 @@ public class PlayerAnimations : MonoBehaviour
 
     private void BlackAnimation()
     {
-        if (Mathf.Abs(Player.InputMove) == 0f)
+        if (Mathf.Abs(Player.InputMove) == 0f && !_isDead)
         {
             Animator.CrossFade("Black_Idle", 0, 0);
         }
-        else if (Mathf.Abs(Player.InputMove) > 0f)
+        else if (Mathf.Abs(Player.InputMove) > 0f && !_isDead)
         {
             Animator.CrossFade("Black_Walk", 0, 0);
         }
@@ -60,11 +81,11 @@ public class PlayerAnimations : MonoBehaviour
 
     private void WhiteAnimation()
     {
-        if (Mathf.Abs(Player.InputMove) == 0f)
+        if (Mathf.Abs(Player.InputMove) == 0f && !_isDead)
         {
             Animator.CrossFade("White_Idle", 0, 0);
         }
-        else if (Mathf.Abs(Player.InputMove) > 0f)
+        else if (Mathf.Abs(Player.InputMove) > 0f && !_isDead)
         {
             Animator.CrossFade("White_Walk", 0, 0);
         }

@@ -1,11 +1,12 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Component")]
     [SerializeField] private Rigidbody2D Rb;
-    [SerializeField] private LayerMask _floorLayerMask;
     [SerializeField] private Collider2D _groundCheck;
+    [SerializeField] private LayerMask _floorLayerMask;
 
     [Header("Movement")]
     [SerializeField] private float _speed;
@@ -24,6 +25,25 @@ public class PlayerMovement : MonoBehaviour
 
     private float _fall = 4f;
 
+    #region Events
+    private void Awake()
+    {
+        PlayerCollision.OnObstacleCollision += OnCollisionDisableMovement;
+    }
+
+    private void OnDestroy()
+    {
+        PlayerCollision.OnObstacleCollision -= OnCollisionDisableMovement;
+    }
+
+    private void OnCollisionDisableMovement()
+    {
+        enabled = false;
+        InputMove = 0;
+        Rb.velocity = Vector3.zero;
+    }
+    #endregion
+
     private void Start()
     {
         Rb = GetComponent<Rigidbody2D>();
@@ -39,6 +59,13 @@ public class PlayerMovement : MonoBehaviour
         JumpBufferTime();
 
         Jump();
+    }
+
+    private void FixedUpdate()
+    {
+        ApplyFriction();
+
+        Move();
     }
 
     #region Calculate jump timer
@@ -90,13 +117,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
     #endregion
-
-    private void FixedUpdate()
-    {
-        ApplyFriction();
-
-        Move();
-    }
 
     #region Movement
     private void ApplyFriction()

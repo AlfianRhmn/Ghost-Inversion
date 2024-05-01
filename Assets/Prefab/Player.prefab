@@ -31,7 +31,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1649087612237127531}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -13.27, y: -5.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -76,8 +76,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1640982799
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f7218ae43f52e2149b9674a3a129e0f4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -102,16 +102,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28fb2c9c9daae9c4981bc41eda74cb96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rb: {fileID: 0}
+  Rb: {fileID: 6064772453069666065}
   _groundCheck: {fileID: 4913896117021744730}
   _floorLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   _speed: 10
-  _jump: 20
+  _jump: 17.5
   _accel: 10
   _drag: 0.75
-  InputMove: 0
 --- !u!114 &6584918653667636593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,6 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ad50c41a24d77b4e9825273fd6787b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentSceneID: 1
 --- !u!114 &7408374755600404328
 MonoBehaviour:
   m_ObjectHideFlags: 0

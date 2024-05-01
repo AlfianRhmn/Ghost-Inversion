@@ -8,6 +8,21 @@ public class RendererScript : MonoBehaviour
     [Header("Condition")]
     [SerializeField] private bool _isBlack = false;
     private bool _isChanged = false;
+    private bool _isDead = false;
+
+    private void Awake()
+    {
+        PlayerCollision.OnObstacleCollision += OnCollision;
+    }
+
+    private void OnDestroy()
+    {
+        PlayerCollision.OnObstacleCollision -= OnCollision;
+    }
+    private void OnCollision()
+    {
+        _isDead = true;
+    }
 
     private void Start()
     {
@@ -34,11 +49,11 @@ public class RendererScript : MonoBehaviour
 
     private void HandleCondition()
     {
-        if (_isBlack)
+        if (_isBlack && !_isDead)
         {
             UpdateWhite();
         }
-        else if (!_isBlack)
+        else if (!_isBlack && !_isDead)
         {
             UpdateBlack();
         }

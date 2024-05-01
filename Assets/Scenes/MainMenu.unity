@@ -282,7 +282,7 @@ Transform:
   m_GameObject: {fileID: 301208472}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 21, y: -115, z: 0}
+  m_LocalPosition: {x: -48, y: -115, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -865,10 +865,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1980, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1475,11 +1475,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6405271886450248625, guid: fc4f865aaa86f084fa5662fbf1a76f8b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1924.4355
+      value: 2001.4128
       objectReference: {fileID: 0}
     - target: {fileID: 6405271886450248625, guid: fc4f865aaa86f084fa5662fbf1a76f8b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1169.0082
+      value: 1133.938
       objectReference: {fileID: 0}
     - target: {fileID: 6405271886450248625, guid: fc4f865aaa86f084fa5662fbf1a76f8b, type: 3}
       propertyPath: m_LocalScale.z
@@ -1487,11 +1487,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6405271886450248625, guid: fc4f865aaa86f084fa5662fbf1a76f8b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 20.26
+      value: 6.81
       objectReference: {fileID: 0}
     - target: {fileID: 6405271886450248625, guid: fc4f865aaa86f084fa5662fbf1a76f8b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -49.73
+      value: -2.38
       objectReference: {fileID: 0}
     - target: {fileID: 6405271886450248625, guid: fc4f865aaa86f084fa5662fbf1a76f8b, type: 3}
       propertyPath: m_LocalPosition.z
