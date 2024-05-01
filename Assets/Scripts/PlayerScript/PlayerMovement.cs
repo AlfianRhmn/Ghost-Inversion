@@ -1,10 +1,11 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Component")]
-    [SerializeField] private Rigidbody2D Rb;
+    [SerializeField] private Rigidbody2D PlayerRB;
     [SerializeField] private Collider2D _groundCheck;
     [SerializeField] private LayerMask _floorLayerMask;
 
@@ -16,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
 
     [HideInInspector] public float InputMove { get; private set; }
     [HideInInspector] public bool InputJump { get; private set; }
+    [HideInInspector] public bool IsDead { get; private set; }
 
     private float _coyoteTime = 0.2f;
     private float _coyoteCounter;
@@ -25,28 +27,10 @@ public class PlayerMovement : MonoBehaviour
 
     private float _fall = 4f;
 
-    #region Events
-    private void Awake()
-    {
-        PlayerCollision.OnObstacleCollision += OnCollisionDisableMovement;
-    }
-
-    private void OnDestroy()
-    {
-        PlayerCollision.OnObstacleCollision -= OnCollisionDisableMovement;
-    }
-
-    private void OnCollisionDisableMovement()
-    {
-        enabled = false;
-        InputMove = 0;
-        Rb.velocity = Vector3.zero;
-    }
-    #endregion
-
     private void Start()
     {
-        Rb = GetComponent<Rigidbody2D>();
+        IsDead = false;
+        PlayerRB = GetComponent<Rigidbody2D>();
         _groundCheck = GetComponent<Collider2D>();
     }
 
@@ -67,6 +51,24 @@ public class PlayerMovement : MonoBehaviour
 
         Move();
     }
+
+    #region Events
+    private void Awake()
+    {
+        PlayerCollision.OnObstacleCollision += OnCollisionDisableMovement;
+    }
+
+    private void OnDestroy()
+    {
+        PlayerCollision.OnObstacleCollision -= OnCollisionDisableMovement;
+    }
+
+    private void OnCollisionDisableMovement()
+    {
+        PlayerRB.velocity = Vector3.zero;
+        IsDead = true;
+    }
+    #endregion
 
     #region Calculate jump timer
     private void CoyoteTime()
@@ -97,23 +99,23 @@ public class PlayerMovement : MonoBehaviour
     #region Jump
     private void Jump() 
     {
-        if (_jumpCounter > 0f && _coyoteCounter > 0f)
+        if (_jumpCounter > 0f && _coyoteCounter > 0f && !IsDead)
         {
-            Rb.velocity = new Vector2(Rb.velocity.x, _jump);
+            PlayerRB.velocity = new Vector2(PlayerRB.velocity.x, _jump);
 
             _jumpCounter = 0f;
         }
 
-        if (Input.GetButtonUp("Jump") && Rb.velocity.y > 0)
+        if (Input.GetButtonUp("Jump") && PlayerRB.velocity.y > 0 && !IsDead)
         {
-            Rb.velocity = new Vector2(Rb.velocity.x, Rb.velocity.y * 0.5f);
+            PlayerRB.velocity = new Vector2(PlayerRB.velocity.x, PlayerRB.velocity.y * 0.5f);
 
             _coyoteCounter = 0f;
         }
 
-        if (Rb.velocity.y < 0f)
+        if (PlayerRB.velocity.y < 0f && !IsDead)
         {
-            Rb.velocity += Vector2.up * Physics2D.gravity.y * (_fall - 1f) * Time.deltaTime;
+            PlayerRB.velocity += Vector2.up * Physics2D.gravity.y * (_fall - 1f) * Time.deltaTime;
         }
     }
     #endregion
@@ -121,19 +123,19 @@ public class PlayerMovement : MonoBehaviour
     #region Movement
     private void ApplyFriction()
     {
-        if (IsGrounded() && InputMove == 0 && Rb.velocity.y == 0)
+        if (IsGrounded() && InputMove == 0 && PlayerRB.velocity.y == 0 && !IsDead)
         {
-            Rb.velocity *= _drag;
+            PlayerRB.velocity *= _drag;
         }
     }
 
     private void Move()
     {
-        if (Mathf.Abs(InputMove) > 0)
+        if (Mathf.Abs(InputMove) > 0 && !IsDead)
         { 
             float _Localincrament = InputMove * _accel;
-            float _LocalnewSpeed = Mathf.Clamp(Rb.velocity.x + _Localincrament, -_speed, _speed);
-            Rb.velocity = new Vector2(_LocalnewSpeed, Rb.velocity.y);
+            float _LocalnewSpeed = Mathf.Clamp(PlayerRB.velocity.x + _Localincrament, -_speed, _speed);
+            PlayerRB.velocity = new Vector2(_LocalnewSpeed, PlayerRB.velocity.y);
 
             float _LocalDirection = Mathf.Sign(InputMove);
             transform.localScale = new Vector3(_LocalDirection, 1, 1);
