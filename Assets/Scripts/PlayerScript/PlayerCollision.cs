@@ -17,8 +17,9 @@ public class PlayerCollision : MonoBehaviour
         }
         if (collision.gameObject.tag == "Exit")
         {
-            currentSceneID--;
-            SceneManager.LoadScene(currentSceneID);
+            FindObjectOfType<AudioManager>().Play("NextLevel");
+            currentSceneID++;
+            Invoke("ChangeLevel", 0.4f);
         }
     }
 

@@ -30,6 +30,7 @@ public class PlayerAnimations : MonoBehaviour
 
     private void Start()
     {
+        _isDead = false;
         Animator = GetComponent<Animator>();
     }
 

@@ -1,5 +1,3 @@
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -7,31 +5,32 @@ public class PlayerMovement : MonoBehaviour
     [Header("Component")]
     [SerializeField] private Rigidbody2D PlayerRB;
     [SerializeField] private Collider2D _groundCheck;
+    [SerializeField] private AudioSource _audioSource;
     [SerializeField] private LayerMask _floorLayerMask;
 
     [Header("Movement")]
     [SerializeField] private float _speed;
     [SerializeField] private float _jump;
     [SerializeField] private float _accel;
-    [SerializeField] private float _drag;
+    [SerializeField][Range (0f, 1f)] private float _drag;
 
     [HideInInspector] public float InputMove { get; private set; }
     [HideInInspector] public bool InputJump { get; private set; }
-    [HideInInspector] public bool IsDead { get; private set; }
+
+    private  bool IsDead = false;
 
     private float _coyoteTime = 0.2f;
     private float _coyoteCounter;
 
-    private float _jumpBuffer = 0.2f;
+    private float _jumpBuffer = 0.1f;
     private float _jumpCounter;
-
-    private float _fall = 4f;
 
     private void Start()
     {
         IsDead = false;
         PlayerRB = GetComponent<Rigidbody2D>();
         _groundCheck = GetComponent<Collider2D>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -39,16 +38,37 @@ public class PlayerMovement : MonoBehaviour
         InputMove = Input.GetAxisRaw("Horizontal");
         InputJump = Input.GetButtonDown("Jump");
 
-        CoyoteTime();
-        JumpBufferTime();
+        if (InputJump && !IsDead)
+        {
+            FindObjectOfType<AudioManager>().Play("Jump");
+        }
+
+        if (Input.GetKeyDown(KeyCode.E) && !IsDead)
+        {
+            FindObjectOfType<AudioManager>().Play("Change");
+        }
+
+        // Plays the footstep sound
+        // i don't know how to do it without adding AudioSource (i'm stupid)
+        if (Mathf.Abs(InputMove) != 0 && PlayerRB.velocity.y == 0 && !IsDead)
+        {
+            if (!_audioSource.isPlaying)
+            {
+                _audioSource.Play();
+            }
+
+        }
+        else if (Mathf.Abs(InputMove) == 0)
+        {
+            _audioSource.Stop();
+        }
 
         Jump();
+       
     }
 
     private void FixedUpdate()
     {
-        ApplyFriction();
-
         Move();
     }
 
@@ -65,14 +85,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionDisableMovement()
     {
+        FindObjectOfType<AudioManager>().Play("Death");
         PlayerRB.velocity = Vector3.zero;
         IsDead = true;
     }
     #endregion
 
-    #region Calculate jump timer
-    private void CoyoteTime()
+    #region Jump
+    private void Jump() 
     {
+        // Coyote time
         if (IsGrounded())
         {
             _coyoteCounter = _coyoteTime;
@@ -81,10 +103,8 @@ public class PlayerMovement : MonoBehaviour
         {
             _coyoteCounter -= Time.deltaTime;
         }
-    }
 
-    private void JumpBufferTime()
-    {
+        // Jump buffering
         if (InputJump)
         {
             _jumpCounter = _jumpBuffer;
@@ -93,12 +113,8 @@ public class PlayerMovement : MonoBehaviour
         {
             _jumpCounter -= Time.deltaTime;
         }
-    }
-    #endregion
 
-    #region Jump
-    private void Jump() 
-    {
+        // Actual jump code
         if (_jumpCounter > 0f && _coyoteCounter > 0f && !IsDead)
         {
             PlayerRB.velocity = new Vector2(PlayerRB.velocity.x, _jump);
@@ -106,17 +122,13 @@ public class PlayerMovement : MonoBehaviour
             _jumpCounter = 0f;
         }
 
-        if (Input.GetButtonUp("Jump") && PlayerRB.velocity.y > 0 && !IsDead)
+        if (Input.GetButtonUp("Jump") && PlayerRB.velocity.y > 0)
         {
             PlayerRB.velocity = new Vector2(PlayerRB.velocity.x, PlayerRB.velocity.y * 0.5f);
 
             _coyoteCounter = 0f;
         }
 
-        if (PlayerRB.velocity.y < 0f && !IsDead)
-        {
-            PlayerRB.velocity += Vector2.up * Physics2D.gravity.y * (_fall - 1f) * Time.deltaTime;
-        }
     }
     #endregion
 
@@ -131,6 +143,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
+        ApplyFriction();
+
         if (Mathf.Abs(InputMove) > 0 && !IsDead)
         { 
             float _Localincrament = InputMove * _accel;
